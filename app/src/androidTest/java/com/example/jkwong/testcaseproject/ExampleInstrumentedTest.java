@@ -7,6 +7,8 @@ import com.robotium.solo.Solo;
 import junit.framework.Assert;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * Instrumentation test, which will execute on an Android device.
@@ -14,6 +16,7 @@ import org.junit.Test;
  * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
  */
 @SuppressWarnings("ALL")
+@RunWith(JUnit4.class)
 public class ExampleInstrumentedTest  extends ActivityInstrumentationTestCase2<MainActivity> {
 
     private Solo solo;
