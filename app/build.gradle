@@ -1,5 +1,4 @@
 apply plugin: 'com.android.application'
-apply plugin: 'jacoco'
 
 android {
     compileSdkVersion 25
@@ -14,9 +13,6 @@ android {
     }
     dexOptions {
         javaMaxHeapSize "4g"
-    }
-    buildTypes {
-        testCoverageEnabled = true
     }
     lintOptions {
         checkReleaseBuilds false
@@ -51,14 +47,6 @@ tasks.withType(Test) {
         showCauses true
         showStackTraces true
 
-        // set options for log level DEBUG and INFO
-        debug {
-            events "started", "passed", "skipped", "failed", "standardOut", "standardError"
-            exceptionFormat "full"
-        }
-        info.events = debug.events
-        info.exceptionFormat = debug.exceptionFormat
-
         afterSuite { desc, result ->
             if (!desc.parent) { // will match the outermost suite
                 def output = "Results: ${result.resultType} (${result.testCount} tests, ${result.successfulTestCount} successes, ${result.failedTestCount} failures, ${result.skippedTestCount} skipped)"
@@ -70,53 +58,12 @@ tasks.withType(Test) {
     }
 }
 
-task jacocoAndroidTestReport(type:JacocoReport,dependsOn:"connectedAndroidTest"){
-    group = "Reporting"
-    description = "Generate Jacoco coverage reports after running tests."
-    reports{
-        xml.enabled false
-        html.enabled true
-        csv.enabled false
+tasks.withType(com.android.build.gradle.internal.tasks.AndroidTestTask) { task ->
+    task.doFirst {
+        logging.level = LogLevel.INFO
     }
-    classDirectories = fileTree(
-            dir : "$buildDir/intermediates/classes/debug",
-            excludes : [
-                    '**/*Test.class',
-                    '**/R.class',
-                    '**/R$*.class',
-                    '**/BuildConfig.*',
-                    '**/Manifest*.*'
-            ]
-    )
-    def coverageSourceDirs = ['src']
-    additionalSourceDirs = files(coverageSourceDirs)
-    sourceDirectories = files(coverageSourceDirs)
-    additionalClassDirs = files(coverageSourceDirs)
-    executionData = files("$buildDir/outputs/androidTest-code-coverage/connected/coverage.ec")
-}
-
-task jacocoTestReport(type:JacocoReport,dependsOn:"test"){
-    group = "Reporting"
-    description = "Generate Jacoco coverage reports after running tests."
-    reports{
-        xml.enabled false
-        html.enabled true
-        csv.enabled false
+    task.doLast {
+        logging.level = LogLevel.LIFECYCLE
     }
-    classDirectories = fileTree(
-            dir : "$buildDir/intermediates/classes/debug",
-            excludes : [
-                    '**/*Test.class',
-                    '**/R.class',
-                    '**/R$*.class',
-                    '**/BuildConfig.*',
-                    '**/Manifest*.*'
-            ]
-    )
-    def coverageSourceDirs = ['src']
-    additionalSourceDirs = files(coverageSourceDirs)
-    sourceDirectories = files(coverageSourceDirs)
-    additionalClassDirs = files(coverageSourceDirs)
-    executionData = files("$buildDir/outputs/test-code-coverage/coverage.ec")
 }
 
