@@ -1,0 +1,70 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 25
+    buildToolsVersion "25.0.0"
+    defaultConfig {
+        applicationId "com.example.jkwong.testcaseproject"
+        minSdkVersion 18
+        targetSdkVersion 25
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.test.InstrumentationTestRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    lintOptions {
+        checkReleaseBuilds false
+    }
+    lintOptions {
+        abortOnError false
+    }
+    testOptions {
+        unitTests.returnDefaultValues = true
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile 'com.android.support:appcompat-v7:25.0.0'
+    compile 'uk.co.chrisjenx:calligraphy:2.1.0'
+    //Junit for Unit Testing
+    testCompile 'junit:junit:4.8.2'
+    testCompile 'org.robolectric:robolectric:3.0-rc3'
+    //Robotium for automated UI Testing
+    androidTestCompile 'com.jayway.android.robotium:robotium-solo:5.6.3'
+    androidTestCompile 'junit:junit:4.8.2'
+}
+
+//Logging for Console record (mainly for Jenkins)
+tasks.withType(Test) {
+    testLogging {
+        // set options for log level LIFECYCLE
+        events "passed", "skipped", "failed", "standardOut"
+        showExceptions true
+        exceptionFormat "full"
+        showCauses true
+        showStackTraces true
+
+        // set options for log level DEBUG and INFO
+        debug {
+            events "started", "passed", "skipped", "failed", "standardOut", "standardError"
+            exceptionFormat "full"
+        }
+        info.events = debug.events
+        info.exceptionFormat = debug.exceptionFormat
+
+        afterSuite { desc, result ->
+            if (!desc.parent) { // will match the outermost suite
+                def output = "Results: ${result.resultType} (${result.testCount} tests, ${result.successfulTestCount} successes, ${result.failedTestCount} failures, ${result.skippedTestCount} skipped)"
+                def startItem = '|  ', endItem = '  |'
+                def repeatLength = startItem.length() + output.length() + endItem.length()
+                println('\n' + ('-' * repeatLength) + '\n' + startItem + output + endItem + '\n' + ('-' * repeatLength))
+            }
+        }
+    }
+}
