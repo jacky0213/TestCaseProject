@@ -3,16 +3,18 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 25
     buildToolsVersion "25.0.0"
+
+    def jenkinsBuild = System.getenv("BUILD_NUMBER") ?: 0
+    def buildTimeStamp = jenkinsBuild!=0? getDateTime():""
+    //noinspection GroovyMissingReturnStatement
     defaultConfig {
         applicationId "com.example.jkwong.testcaseproject"
         minSdkVersion 18
         targetSdkVersion 25
-        versionCode 1
-        versionName "1.0"
+        versionCode jenkinsBuild.toInteger()
+        versionName "0.1." + versionCode + "-$buildTimeStamp"
         testInstrumentationRunner "android.test.InstrumentationTestRunner"
-    }
-    dexOptions {
-        javaMaxHeapSize "4g"
+        setProperty("archivesBaseName", "Test_v$versionName" )
     }
     lintOptions {
         checkReleaseBuilds false
@@ -35,7 +37,6 @@ dependencies {
     testCompile 'org.robolectric:robolectric:3.0-rc3'
     //Robotium for automated UI Testing
     androidTestCompile 'com.jayway.android.robotium:robotium-solo:5.6.3'
-    androidTestCompile 'junit:junit:4.8.2'
 }
 
 //Logging for Console record (mainly for Jenkins)
