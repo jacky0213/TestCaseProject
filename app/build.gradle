@@ -1,4 +1,13 @@
+import java.text.DateFormat
+import java.text.SimpleDateFormat
+
 apply plugin: 'com.android.application'
+
+def getDateTime() {
+    DateFormat df = new SimpleDateFormat("YYYYMMDDHHmm");
+
+    return df.format(new Date());
+}
 
 android {
     compileSdkVersion 25
