@@ -25,6 +25,9 @@ android {
         testInstrumentationRunner "android.test.InstrumentationTestRunner"
         setProperty("archivesBaseName", "Test_v$versionName" )
     }
+    aaptOptions {
+        cruncherEnabled = false
+    }
     lintOptions {
         checkReleaseBuilds false
     }
@@ -38,7 +41,6 @@ android {
 }
 
 dependencies {
-    classpath 'com.android.tools.build:gradle:2.2.2'
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.android.support:appcompat-v7:25.0.0'
     compile 'uk.co.chrisjenx:calligraphy:2.1.0'
